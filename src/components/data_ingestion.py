@@ -10,6 +10,9 @@ from dataclasses import dataclass
 from src.components.data_transformation import DataTransformation
 from src.components.data_transformation import DataTransformationConfig
 
+from src.components.model_trainer import ModelTrainerConfig
+from src.components.model_trainer import ModelTrainer
+
 @dataclass
 class DataIngestionConfig:
     train_data_path: str = os.path.join('artifacts', 'train.csv')
@@ -49,12 +52,32 @@ class DataIngestion:
 
 
 
-if __name__=="__main__":
-    obj = DataIngestion()
-    train_path, test_path = obj.initiate_data_ingestion()
-    obj.initiate_data_ingestion()
 
-    data_transformmation = DataTransformation()
-    data_transformmation.initiate_data_transformation(train_path, test_path)
+if __name__ == "__main__":
+    obj = DataIngestion()
+
+    # Step 1: Data ingestion
+    train_data, test_data = obj.initiate_data_ingestion()
+
+    # Step 2: Data transformation
+    data_transformation = DataTransformation()
+
+    train_array, test_array, preprocessor_path = (
+        data_transformation.initiate_data_transformation(
+            train_data, test_data
+        )
+    )
+
+    print("Data transformation completed successfully.")
+    print("Preprocessor saved at:", preprocessor_path)
+
+    # Step 3: Model training
+    modeltrainer = ModelTrainer()
+
+    print(
+        modeltrainer.initiate_model_trainer(
+            train_array, test_array
+        )
+    )
 
 
